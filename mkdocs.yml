@@ -1,0 +1,47 @@
+site_name: Spark by Example
+repo_url: https://github.com/skhatri/spark-by-example.git
+
+nav:
+    - Guide: 'README.md'
+    - Setup:
+        - 'Certificate': 'setup/Certificate.md'
+        - 'Cassandra': 'setup/Cassandra.md'
+        - 'S3': 'setup/S3.md'
+        - 'Spark Image': 'setup/SparkImage.md'
+        - 'Cassandra on Docker': 'setup/DockerCassandra.md'
+        - 'Kubernetes': 'setup/Kubernetes.md'
+    - Running:
+        - 'Locally': 'running/RunningLocally.md'
+        - 'Docker': 'running/RunningDocker.md'
+        - 'Kubernetes': 'running/RunningKubernetes.md'
+    - Issues:
+        - 'Tracker': 'https://github.com/skhatri/spark-by-example/issues'
+
+docs_dir: "docs"
+site_dir: "site"
+extra_css:
+  - styles/css/default.css
+use_directory_urls: true
+dev_addr: '127.0.0.1:8000'
+
+theme:
+    name: readthedocs
+    highlightjs: true
+    hljs_languages:
+        - yaml
+        - scala
+    include_sidebar: false
+
+markdown_extensions:
+  smarty: {}
+  toc:
+    permalink: True
+  sane_lists: {}
+
+plugins:
+  - search:
+      min_search_length: 3
+      prebuild_index: True
+      indexing: 'full'
+      separator: '[\s\-\.]+'
+

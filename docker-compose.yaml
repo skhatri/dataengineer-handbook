@@ -1,0 +1,27 @@
+version: '3.7'
+volumes:
+    dsedb: {}
+services:
+
+    dse:
+      build: .
+      image: datastax/dse-server:6.8.26 
+      environment:
+        - DS_LICENSE=accept
+        - SSL_VALIDATE=false
+      ports:
+        - "9042:9042"
+      container_name: dse
+      volumes:
+        - ./cql/data:/var/lib/cassandra/data
+        - ./cql/cassandra.yaml:/config/cassandra.yaml
+        - ./dse/keystore.p12:/opt/dse/resources/dse/conf/keystore.p12
+      networks:
+        sparkjob:
+          aliases:
+            - dse
+networks:
+  sparkjob: {}
+
+
+      

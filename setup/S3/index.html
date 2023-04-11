@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>S3 - Spark by Example</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+        <link href="../../styles/css/default.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "S3";
+        var mkdocs_page_input_path = "setup/S3.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <script src="../../js/jquery-3.6.0.min.js" defer></script>
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/yaml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/scala.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> Spark by Example
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Guide</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Setup</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../Certificate/">Certificate</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Cassandra/">Cassandra</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="./">S3</a>
+    <ul class="current">
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../SparkImage/">Spark Image</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../DockerCassandra/">Cassandra on Docker</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Kubernetes/">Kubernetes</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Running</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../running/RunningLocally/">Locally</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../running/RunningDocker/">Docker</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../running/RunningKubernetes/">Kubernetes</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Issues</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="" href="https://github.com/skhatri/spark-by-example/issues">Tracker</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Spark by Example</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" alt="Docs"></a> &raquo;</li>
+          <li>Setup &raquo;</li><li>S3</li>
+    <li class="wy-breadcrumbs-aside">
+        <a href="https://github.com/skhatri/spark-by-example.git/edit/master/docs/setup/S3.md"
+          class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h3 id="setup-s3-buckets">Setup S3 Buckets<a class="headerlink" href="#setup-s3-buckets" title="Permanent link">&para;</a></h3>
+<p>For this demo, we will create two different S3 buckets.
+In one we will store the content of build directory and in another we will store the data generated by our cassandra database.
+The choice of folders is arbitrary and is used to create some content.</p>
+<p>Create a bucket spark-job-build and sync build folder with it</p>
+<pre><code>aws s3 mb s3://spark-job-build
+aws s3 sync build s3://spark-job-build
+</code></pre>
+
+<p>Create a bucket spark-job-cql and sync cql folder with it</p>
+<pre><code>aws s3 mb s3://spark-job-cql
+mkdir -p cql
+aws s3 sync cql s3://spark-job-cql
+</code></pre>
+
+<p>We will also update the bucket policy for spark-job-cql to enforce the use of certain TLS version.</p>
+<pre><code>cat &gt; bucket.json &lt;&lt;EOF
+{
+  &quot;Version&quot;: &quot;2012-10-17&quot;,
+  &quot;Statement&quot;: [
+    {
+      &quot;Sid&quot;: &quot;EnforceTLSv12orHigher&quot;,
+      &quot;Principal&quot;: {
+        &quot;AWS&quot;: &quot;*&quot;
+      },
+      &quot;Action&quot;: [&quot;s3:*&quot;],
+      &quot;Effect&quot;: &quot;Deny&quot;,
+      &quot;Resource&quot;: [
+        &quot;arn:aws:s3:::spark-job-cql/*&quot;,
+        &quot;arn:aws:s3:::spark-job-cql&quot;
+      ],
+      &quot;Condition&quot;: {
+        &quot;NumericLessThan&quot;: {
+          &quot;s3:TlsVersion&quot;: 1.2
+        }
+      }
+    }
+  ]
+}
+EOF
+</code></pre>
+
+<p>Once the above snippet is executed to create a policy.json, apply the policy and verify it by retrieving it.</p>
+<pre><code>aws s3api put-bucket-policy --bucket spark-job-cql --policy file://bucket.json 
+aws s3api get-bucket-policy --bucket spark-job-cql
+</code></pre>
+
+<p>The information about support of TLS versions by AWS can be found here.
+https://aws.amazon.com/blogs/security/tls-1-2-required-for-aws-endpoints/</p>
+<p>Similarly setup the S3 Access ID and Key as environment variables so as to not share it anywhere within this codebase.</p>
+<p>It can be stored in either ~/.zshrc or equivalent</p>
+<pre><code>export AWS_ACCESS_KEY_ID=
+export AWS_SECRET_ACCESS_KEY=
+</code></pre>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../Cassandra/" class="btn btn-neutral float-left" title="Cassandra"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../SparkImage/" class="btn btn-neutral float-right" title="Spark Image">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/skhatri/spark-by-example.git" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../Cassandra/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../SparkImage/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme_extra.js" defer></script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

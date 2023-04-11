@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Cassandra - Spark by Example</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+        <link href="../../styles/css/default.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Cassandra";
+        var mkdocs_page_input_path = "setup/Cassandra.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <script src="../../js/jquery-3.6.0.min.js" defer></script>
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/yaml.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/languages/scala.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> Spark by Example
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Guide</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Setup</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../Certificate/">Certificate</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="./">Cassandra</a>
+    <ul class="current">
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../S3/">S3</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../SparkImage/">Spark Image</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../DockerCassandra/">Cassandra on Docker</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../Kubernetes/">Kubernetes</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Running</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../running/RunningLocally/">Locally</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../running/RunningDocker/">Docker</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../running/RunningKubernetes/">Kubernetes</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Issues</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="" href="https://github.com/skhatri/spark-by-example/issues">Tracker</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Spark by Example</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" alt="Docs"></a> &raquo;</li>
+          <li>Setup &raquo;</li><li>Cassandra</li>
+    <li class="wy-breadcrumbs-aside">
+        <a href="https://github.com/skhatri/spark-by-example.git/edit/master/docs/setup/Cassandra.md"
+          class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h3 id="setup-cassandra-ssl">Setup Cassandra SSL<a class="headerlink" href="#setup-cassandra-ssl" title="Permanent link">&para;</a></h3>
+<p>This setup can help test cassandra setup with TLS which is often the case with production environments.</p>
+<p>Copy a cassandra.yaml from the cassandra image of your choice and update it such that you configure the TLS behaviour.</p>
+<pre><code>docker run -v $(pwd)/cql:/tmp --entrypoint bash -it datastax/dse-server:6.8.26
+#in the shell
+$ cp /opt/dse/resources/cassandra/conf/cassandra.yaml /tmp/cassandra.yaml
+$ exit
+
+</code></pre>
+
+<p>With the copied file, the Client Connection TLS behaviour can be added like so:</p>
+<pre><code>client_encryption_options:
+    enabled: true
+    optional: false
+    keystore: resources/dse/conf/keystore.p12
+    keystore_password: cassandra
+    keystore_type: PKCS12
+    cipher_suites: [TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384]
+</code></pre>
+
+<p>Refer to <a href="../Certificate">Certificate</a> on how to create keystore.p12 used in this example.
+Cassandra by default supports weak ciphers as well. The cipher_suites list contains strong ciphers.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../Certificate/" class="btn btn-neutral float-left" title="Certificate"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../S3/" class="btn btn-neutral float-right" title="S3">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/skhatri/spark-by-example.git" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../Certificate/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../S3/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme_extra.js" defer></script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>

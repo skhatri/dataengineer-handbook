@@ -37,9 +37,9 @@ dependencies {
     }
 
     implementation("io.netty:netty-codec:4.1.91.Final")
-    hadoop("org.apache.hadoop:hadoop-aws:3.3.5")
-    hadoop("org.apache.hadoop:hadoop-common:3.3.5")
-    hadoop("com.amazonaws:aws-java-sdk-s3:1.12.316")
+    hadoop("org.apache.hadoop:hadoop-aws:3.3.2")
+    hadoop("org.apache.hadoop:hadoop-common:3.3.2")
+    hadoop("com.amazonaws:aws-java-sdk-s3:1.11.1026")
 
     implementation(spark)
     implementation(uber)
@@ -60,10 +60,11 @@ tasks.build {
 
 
 task("runApp", JavaExec::class) {
-    main = "demo.Count"
+    main = "demo.ParquetReadWrite"
     classpath = sourceSets["main"].runtimeClasspath
     jvmArgs = listOf(
-        "-Xms512m", "-Xmx512m"
+        "-Xms512m", "-Xmx512m",
+        "--add-exports", "java.base/sun.nio.ch=ALL-UNNAMED"
     )
 }
 

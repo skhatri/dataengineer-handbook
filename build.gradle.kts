@@ -1,6 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
-val sparkVersion = "3.3.2"
+val sparkVersion = "3.4.0"
 val scalaVersion = "2.12"
 
 val spark by configurations.creating
@@ -37,9 +37,9 @@ dependencies {
     }
 
     implementation("io.netty:netty-codec:4.1.91.Final")
-    hadoop("org.apache.hadoop:hadoop-aws:3.3.2")
-    hadoop("org.apache.hadoop:hadoop-common:3.3.2")
-    hadoop("com.amazonaws:aws-java-sdk-s3:1.11.1026")
+    hadoop("org.apache.hadoop:hadoop-aws:3.3.4")
+    hadoop("org.apache.hadoop:hadoop-common:3.3.4")
+    hadoop("com.amazonaws:aws-java-sdk-s3:1.12.262")
 
     implementation(spark)
     implementation(uber)
